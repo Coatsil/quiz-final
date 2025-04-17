@@ -198,123 +198,67 @@
         // Preguntas del quiz organizadas por secciones
         const questions = [
             // Sección 1: JavaScript Básico
-            {
-                section: "JavaScript Básico",
-                question: "¿Qué hace querySelector en JS?",
-                options: ["Selecciona por ID", "Selecciona por selectores CSS", "Crea un nuevo nodo", "Borra un elemento"],
-                answer: "Selecciona por selectores CSS",
-                explanation: "querySelector() es un método que selecciona el primer elemento que coincide con un selector CSS especificado."
-            },
-            {
-                section: "JavaScript Básico",
-                question: "¿Es posible declarar un arreglo sin tamaño en JS?",
-                options: ["Sí", "No", "Solo con var", "Solo en modo estricto"],
-                answer: "Sí",
-                explanation: "En JavaScript los arrays son dinámicos y no requieren un tamaño fijo al declararlos."
-            },
-            {
-                section: "JavaScript Básico",
-                question: "¿Qué es length en JS?",
-                options: ["Devuelve número de elementos o caracteres", "Elimina texto", "Repite cadenas", "Aplica estilos"],
-                answer: "Devuelve número de elementos o caracteres",
-                explanation: "La propiedad length devuelve el número de elementos en un array o la longitud de una cadena."
-            },
-            {
-                section: "JavaScript Básico",
-                question: "¿Qué hace slice() en JS?",
-                options: ["Extrae parte de un arreglo o cadena", "Ordena alfabéticamente", "Borra elementos", "Transforma tipos"],
-                answer: "Extrae parte de un arreglo o cadena",
-                explanation: "slice() extrae una sección de un array o cadena y devuelve uno nuevo sin modificar el original."
-            },
-            {
-                section: "JavaScript Básico",
-                question: "¿Qué hace prompt() en JS?",
-                options: ["Solicita entrada al usuario", "Muestra advertencia", "Inicia sesión", "Descarga archivo"],
-                answer: "Solicita entrada al usuario",
-                explanation: "prompt() muestra un cuadro de diálogo que solicita al usuario que ingrese algún texto."
-            },
-            
-            // Sección 2: Funciones y Eventos
-            {
-                section: "Funciones y Eventos",
-                question: "¿Qué hace addEventListener() en JS?",
-                options: ["Agrega eventos a elementos HTML", "Cambia estilo de texto", "Multiplica arreglos", "Crea funciones"],
-                answer: "Agrega eventos a elementos HTML",
-                explanation: "addEventListener() permite asignar múltiples manejadores de eventos a un elemento."
-            },
-            {
-                section: "Funciones y Eventos",
-                question: "¿Qué evento se activa cuando se hace clic en un elemento?",
-                options: ["click", "keypress", "scroll", "touchend"],
-                answer: "click",
-                explanation: "El evento click se dispara cuando se presiona y suelta un botón del ratón sobre un elemento."
-            },
-            {
-                section: "Funciones y Eventos",
-                question: "¿Qué evento ocurre cuando el contenido de visibilidad de una página cambia?",
-                options: ["visibilitychange", "mouseover", "mousedown", "blur"],
-                answer: "visibilitychange",
-                explanation: "Este evento se dispara cuando el contenido de una pestaña se vuelve visible o se oculta."
-            },
-            
-            // Sección 3: Bibliotecas y Frameworks
-            {
-                section: "Bibliotecas y Frameworks",
-                question: "¿Cuál de estas es una biblioteca de JS?",
-                options: ["React", "PHP", "MySQL", "Java"],
-                answer: "React",
-                explanation: "React es una biblioteca JavaScript para construir interfaces de usuario."
-            },
-            {
-                section: "Bibliotecas y Frameworks",
-                question: "¿Qué es Angular?",
-                options: ["Framework JS para SPAs", "Editor de texto", "Framework de Python", "Script en PHP"],
-                answer: "Framework JS para SPAs",
-                explanation: "Angular es un framework para construir aplicaciones de una sola página (SPAs)."
-            },
-            {
-                section: "Bibliotecas y Frameworks",
-                question: "¿Qué es Node.js?",
-                options: ["Entorno para ejecutar JS del lado del servidor", "Editor de código", "Navegador experimental", "Herramienta de diseño"],
-                answer: "Entorno para ejecutar JS del lado del servidor",
-                explanation: "Node.js permite ejecutar JavaScript en el servidor, fuera del navegador."
-            },
-            
-            // Sección 4: Seguridad Web
-            {
-                section: "Seguridad Web",
-                question: "¿Cuál es una amenaza de seguridad para aplicaciones web?",
-                options: ["SQL Injection", "CSS avanzado", "jQuery", "AJAX"],
-                answer: "SQL Injection",
-                explanation: "SQL Injection es un ataque que permite inyectar código SQL malicioso en una consulta."
-            },
-            {
-                section: "Seguridad Web",
-                question: "¿Cuál es otra amenaza para aplicaciones web?",
-                options: ["XSS (Cross-Site Scripting)", "Bootstrap", "LocalStorage", "HTML5"],
-                answer: "XSS (Cross-Site Scripting)",
-                explanation: "XSS permite inyectar scripts maliciosos que se ejecutan en el navegador de la víctima."
-            },
-            
-            // Sección 5: Conceptos Avanzados
-            {
-                section: "Conceptos Avanzados",
-                question: "¿Qué es el patrón MVC?",
-                options: ["Una tecnología de servidor", "Un patrón que separa modelo, vista y controlador", "Un lenguaje de programación", "Un tipo de animación"],
-                answer: "Un patrón que separa modelo, vista y controlador",
-                explanation: "MVC separa la lógica en tres componentes: Modelo (datos), Vista (interfaz) y Controlador (lógica)."
-            },
-            {
-                section: "Conceptos Avanzados",
-                question: "AJAX significa:",
-                options: ["Application Java Extension", "Advanced Java and XML", "Asynchronous JavaScript and XML", "Automatic JavaScript Application Xchange"],
-                answer: "Asynchronous JavaScript and XML",
-                explanation: "AJAX permite actualizar partes de una página web sin recargarla completamente."
-            },
-            
-            // ... (aquí irían el resto de las preguntas organizadas por secciones)
-            // Nota: He incluido solo algunas como ejemplo para mantener el código legible
-            // En la implementación real, incluirías todas tus preguntas organizadas
+            { question: "¿Qué hace querySelector en JS?", options: ["Selecciona por ID", "Selecciona por selectores CSS", "Crea un nuevo nodo", "Borra un elemento"], answer: 1 },
+            { question: "¿Es posible declarar un arreglo sin tamaño en JS?", options: ["Sí", "No", "Solo con var", "Solo en modo estricto"], answer: 0 },
+            { question: "¿Qué es length en JS?", options: ["Devuelve número de elementos o caracteres", "Elimina texto", "Repite cadenas", "Aplica estilos"], answer: 0 },
+            { question: "¿Qué hace slice() en JS?", options: ["Extrae parte de un arreglo o cadena", "Ordena alfabéticamente", "Borra elementos", "Transforma tipos"], answer: 0 },
+            { question: "¿Qué hace prompt() en JS?", options: ["Solicita entrada al usuario", "Muestra advertencia", "Inicia sesión", "Descarga archivo"], answer: 0 },
+            { question: "¿Qué hace alert() en JS?", options: ["Muestra una alerta emergente", "Borra el DOM", "Valida formularios", "Declara variables"], answer: 0 },
+            { question: "¿Qué hace addEventListener() en JS?", options: ["Agrega eventos a elementos HTML", "Cambia estilo de texto", "Multiplica arreglos", "Crea funciones"], answer: 0 },
+          { question: "¿Qué hace toUpperCase() en JS?", options: ["Convierte a mayúsculas", "Convierte a números", "Concatena cadenas", "Reduce el tamaño"], answer: 0 },
+          { question: "¿Qué hace toLowerCase() en JS?", options: ["Convierte a minúsculas", "Elimina espacios", "Muestra una alerta", "Convierte a binario"], answer: 0 },
+          { question: "¿Qué es una biblioteca en programación?", options: ["Conjunto de funciones reutilizables", "Base de datos", "Estilo visual", "Controlador de eventos"], answer: 0 },
+          { question: "¿Cuál de estas es una biblioteca de JS?", options: ["React", "PHP", "MySQL", "Java"], answer: 0 },
+          { question: "¿Qué hace show() en jQuery?", options: ["Muestra un elemento oculto", "Oculta un texto", "Cambia color", "Agrega una clase"], answer: 0 },
+          { question: "¿Qué hace hide() en jQuery?", options: ["Oculta un elemento", "Destruye el HTML", "Reinicia la página", "Valida campos"], answer: 0 },
+          { question: "¿Qué hace fadeIn() en jQuery?", options: ["Muestra un elemento con efecto de desvanecimiento", "Borra un archivo", "Carga scripts externos", "Ejecuta animaciones CSS"], answer: 0 },
+          { question: "¿Qué hace fadeOut() en jQuery?", options: ["Oculta con efecto de desvanecimiento", "Sube volumen", "Convierte datos", "Selecciona clases"], answer: 0 },
+          { question: "¿Qué hace css() en jQuery?", options: ["Modifica estilos de un elemento", "Guarda una imagen", "Agrega etiquetas", "Filtra resultados"], answer: 0 },
+          { question: "¿Qué es React?", options: ["Biblioteca de JS para interfaces UI", "Motor de base de datos", "Sistema operativo", "Editor de HTML"], answer: 0 },
+          { question: "¿Qué es Three.js?", options: ["Biblioteca para gráficos 3D en navegador", "Extensión de CSS", "Librería de audio", "Plugin de seguridad"], answer: 0 },
+          { question: "¿Qué es un framework?", options: ["Estructura base para desarrollar software", "Archivo ejecutable", "Compilador de código", "Librería multimedia"], answer: 0 },
+          { question: "¿Qué es Angular?", options: ["Framework JS para SPAs", "Editor de texto", "Framework de Python", "Script en PHP"], answer: 0 },
+          { question: "¿Qué es Node.js?", options: ["Entorno para ejecutar JS del lado del servidor", "Editor de código", "Navegador experimental", "Herramienta de diseño"], answer: 0 },
+          { question: "¿Cuál es una amenaza de seguridad para aplicaciones web?", options: ["SQL Injection", "CSS avanzado", "jQuery", "AJAX"], answer: 0 },
+          { question: "¿Cuál es otra amenaza para aplicaciones web?", options: ["XSS (Cross-Site Scripting)", "Bootstrap", "LocalStorage", "HTML5"], answer: 0 },
+          { question: "¿Qué es un wireframe?", options: ["Una guía visual de la estructura de un sitio web", "Un script en PHP", "Un tipo de animación en CSS", "Una base de datos"], answer: 0 },
+          { question: "¿Qué es el patrón MVC?", options: ["Una tecnología de servidor", "Un patrón que separa modelo, vista y controlador", "Un lenguaje de programación", "Un tipo de animación"], answer: 1 },
+          { question: "¿Qué función en PHP permite enviar correos?", options: ["correo()", "mail()", "sendEmail()", "phpMail()"], answer: 1 },
+          { question: "AJAX significa:", options: ["Application Java Extension", "Advanced Java and XML", "Asynchronous JavaScript and XML", "Automatic JavaScript Application Xchange"], answer: 2 },
+          { question: "¿Qué propiedad en CSS permite definir una animación?", options: ["animation", "script", "keyframes", "style"], answer: 2 },
+          { question: "¿Qué etiqueta HTML se usa para incrustar código JavaScript?", options: [" js >", "< javascript ", " script >", "< code "], answer: 2 },
+          { question: "¿Cuál es el método HTTP que se utiliza para enviar datos a un servidor?", options: ["GET", "SEND", "POST", "PUT"], answer: 2 },
+          { question: "¿Qué tipo de archivos se suelen utilizar para estilos CSS?", options: [".html", ".php", ".js", ".css"], answer: 3 },
+          { question: "¿Qué se usa para conectar una base de datos con PHP?", options: ["Java Connector", "MySQLi o PDO", "PHP Linker", "Database Plug"], answer: 1 },
+          { question: "¿Cuál es el propósito del atributo 'action' en un formulario HTML?", options: ["Establecer el estilo del formulario", "Definir el script que procesará los datos", "Validar datos del formulario", "Crear una animación"], answer: 1 },
+          { question: "¿Qué herramienta permite revisar errores en el código JavaScript desde el navegador?", options: ["Editor de texto", "Consola del navegador", "Photoshop", "AJAX"], answer: 1 },
+          { question: "¿Qué hace la función isset() en PHP?", options: ["Verifica si una variable está definida y no es NULL", "Asigna un valor a una variable", "Concatena variables", "Convierte tipos de datos"], answer: 0 },
+          { question: "¿Cómo se declaran variables en JavaScript?", options: ["var y let", "if y else", "int y float", "static y public"], answer: 0 },
+          { question: "¿Qué es una cadena en programación?", options: ["Es una sucesión de caracteres o texto", "Una estructura numérica", "Un tipo de imagen", "Una función matemática"], answer: 0 },
+          { question: "¿Qué es un arreglo en programación?", options: ["Una estructura que almacena múltiples valores", "Un solo número", "Una imagen vectorial", "Un operador lógico"], answer: 0 },
+          { question: "¿Qué es castear una variable?", options: ["Copiar su valor", "Convertirla a otro tipo", "Eliminarla", "Renombrarla"], answer: 1 },
+          { question: "¿Qué hace getElementById?", options: ["Crea un nuevo ID", "Obtiene un elemento por su ID", "Agrega un evento", "Selecciona por clase"], answer: 1 },
+          { question: "¿Qué hace length?", options: ["Cuenta caracteres o elementos", "Convierte texto", "Elimina espacios", "Compara valores"], answer: 0 },
+          { question: "¿Qué hace slice()?", options: ["Extrae una porción", "Borra un valor", "Reemplaza datos", "Agrega elementos"], answer: 0 },
+          { question: "¿Qué hace prompt()?", options: ["Muestra un botón", "Pide un dato al usuario", "Calcula datos", "Agrega texto"], answer: 1 },
+          { question: "¿Qué hace alert()?", options: ["Muestra una alerta", "Declara una variable", "Cambia color", "Inicia sesión"], answer: 0 },
+          { question: "¿Qué hace addEventListener()?", options: ["Inicia animación", "Agrega un evento", "Elimina HTML", "Envía datos"], answer: 1 },
+          { question: "¿Qué hace toUpperCase()?", options: ["Convierte a minúscula", "Convierte a número", "Convierte a mayúscula", "Divide texto"], answer: 2 },
+          { question: "¿Qué hace toLowerCase()?", options: ["Convierte a minúscula", "Convierte a símbolo", "Aumenta tamaño", "Agrega color"], answer: 0 },
+          { question: "¿Qué son los eventos en JS?", options: ["Estilos CSS", "Acciones del navegador", "Variables", "Selectores"], answer: 1 },
+          { question: "¿Qué evento se activa cuando se hace clic en un elemento?", options: ["click", "keypress", "scroll", "touchend"], answer: 0 },
+          { question: "¿Qué evento se activa al hacer doble clic sobre un elemento?", options: ["mousedown", "submit", "dblclick", "resize"], answer: 2 },
+          { question: "¿Qué evento se activa cuando se presiona una tecla?", options: ["keypress", "keydown", "keyup", "mousedown"], answer: 1 },
+          { question: "¿Qué evento ocurre cuando se suelta una tecla?", options: ["keydown", "submit", "keyup", "focus"], answer: 2 },
+          { question: "¿Qué evento ocurre al cambiar el tamaño de la ventana?", options: ["change", "resize", "scroll", "drag"], answer: 1 },
+          { question: "¿Qué evento indica que una página se ha cargado completamente?", options: ["blur", "focus", "load", "mouseover"], answer: 2 },
+          { question: "¿Qué evento ocurre cuando el contenido de visibilidad de una página cambia?", options: ["visibilitychange", "mouseover", "mousedown", "blur"], answer: 0 },
+          { question: "¿Qué evento se activa al enviar un formulario?", options: ["submit", "reset", "blur", "keyup"], answer: 0 },
+          { question: "¿Qué evento ocurre cuando un campo de formulario obtiene el foco?", options: ["hover", "load", "focus", "click"], answer: 2 },
+          { question: "¿Qué evento ocurre al arrastrar un elemento?", options: ["drag", "click", "scroll", "submit"], answer: 0 },
+          { question: "¿Qué evento ocurre al soltar un elemento arrastrado?", options: ["drop", "blur", "keypress", "reset"], answer: 0 },
+          { question: "¿Qué evento ocurre cuando se toca la pantalla en dispositivos móviles?", options: ["touchstart", "mousedown", "keyup", "focus"], answer: 0 },
+          { question: "¿Qué evento ocurre cuando el dedo se mueve sobre la pantalla táctil?", options: ["touchmove", "scroll", "mousemove", "touchend"], answer: 0 }
         ];
 
         // Variables de estado
