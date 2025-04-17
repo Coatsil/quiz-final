@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Sistemas Distribuidos y Seguridad</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #3498db;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .section-title {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 30px 0 15px 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .navigation button {
+            margin: 0;
+        }
+        
+        #restart-btn {
+            background-color: #e74c3c;
+        }
+        
+        #restart-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz de Sistemas Distribuidos y Seguridad</h1>
+    <div class="timer">Tiempo: <span id="time">15:00</span></div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    
+    <div id="start-screen">
+        <div class="quiz-container">
+            <h2>Bienvenido al Quiz de Sistemas Distribuidos y Seguridad</h2>
+            <p>Este cuestionario cubre temas fundamentales sobre arquitecturas distribuidas, malware y conceptos de seguridad informática.</p>
+            <p>El quiz contiene 12 preguntas. Tendrás 10 minutos para completarlo.</p>
+            <button id="start-btn">Comenzar Quiz</button>
+        </div>
+    </div>
+    
+    <div id="quiz" class="hidden">
+        <div class="section-title" id="section-title">Sección 1: Arquitecturas Distribuidas</div>
+        <div class="quiz-container" id="question-container"></div>
+        <div class="navigation">
+            <button id="prev-btn" disabled>Anterior</button>
+            <button id="next-btn">Siguiente</button>
+        </div>
+    </div>
+    
+    <div id="results" class="hidden">
+        <div class="quiz-container">
+            <h2>Resultados del Quiz</h2>
+            <div class="results" id="score-container"></div>
+            <div id="detailed-results"></div>
+            <button id="restart-btn">Reiniciar Quiz</button>
+            <a href="../index.html"><button id="restart-btn">Regresar al menú.</button></a>
+        </div>
+    </div>
+
+    <script>
+        // Preguntas del quiz organizadas por secciones
+        const questions = [
+            // Sección 1: Arquitecturas Distribuidas
+            {
+                section: "Arquitecturas Distribuidas",
+                question: "¿Cuáles son las tres arquitecturas principales de sistemas distribuidos?",
+                options: [
+                    "Cliente-Servidor, P2P, Cliente-Navegador", 
+                    "Monolítica, Multicapa, Microservicios", 
+                    "Centralizada, Descentralizada, Híbrida", 
+                    "SOA, REST, RPC"
+                ],
+                answer: "Cliente-Servidor, P2P, Cliente-Navegador",
+                explanation: "<strong>Respuesta correcta:</strong> Cliente-Servidor, P2P, Cliente-Navegador<br>Las tres arquitecturas principales son:<ul><li><strong>Cliente-Servidor:</strong> Modelo jerárquico donde los clientes solicitan servicios a servidores.</li><li><strong>P2P (Peer-to-Peer):</strong> Red descentralizada donde los nodos actúan como clientes y servidores.</li><li><strong>Cliente-Navegador:</strong> Modelo web donde el cliente accede a servicios a través de un navegador.</li></ul>"
+            },
+            {
+                section: "Arquitecturas Distribuidas",
+                question: "¿Cuál de estas NO es una característica de la arquitectura cliente-servidor?",
+                options: [
+                    "Comunicación mediante solicitud-respuesta", 
+                    "Centralización de la gestión de datos", 
+                    "Todos los nodos tienen igual capacidad", 
+                    "Escalabilidad vertical mejorando el servidor"
+                ],
+                answer: "Todos los nodos tienen igual capacidad",
+                explanation: "<strong>Respuesta correcta:</strong> Todos los nodos tienen igual capacidad<br>En cliente-servidor existe una clara distinción de roles:<ul><li>El <strong>servidor</strong> provee recursos y servicios (mayor capacidad).</li><li>El <strong>cliente</strong> consume estos servicios (menor capacidad).</li><li>La igualdad de capacidades es característica del modelo P2P.</li></ul>"
+            },
+            {
+                section: "Arquitecturas Distribuidas",
+                question: "En el modelo P2P, ¿qué ventaja tiene sobre el cliente-servidor?",
+                options: [
+                    "Mayor seguridad y control centralizado", 
+                    "No tiene punto único de fallo", 
+                    "Mejor rendimiento para aplicaciones web", 
+                    "Más fácil de administrar y mantener"
+                ],
+                answer: "No tiene punto único de fallo",
+                explanation: "<strong>Respuesta correcta:</strong> No tiene punto único de fallo<br>Ventajas del P2P:<ul><li><strong>Resistencia a fallos:</strong> Al no depender de un servidor central, la red sigue funcionando aunque algunos nodos fallen.</li><li><strong>Escalabilidad:</strong> Cada nuevo nodo añade capacidad a la red.</li><li><strong>Distribución de carga:</strong> El tráfico se distribuye entre todos los nodos.</li></ul>"
+            },
+            {
+                section: "Arquitecturas Distribuidas",
+                question: "¿Qué característica define al modelo cliente-navegador?",
+                options: [
+                    "Requiere software específico instalado", 
+                    "Usa tecnologías web como HTTP/HTML/JavaScript", 
+                    "Solo funciona en redes locales", 
+                    "Los datos se almacenan principalmente en el cliente"
+                ],
+                answer: "Usa tecnologías web como HTTP/HTML/JavaScript",
+                explanation: "<strong>Respuesta correcta:</strong> Usa tecnologías web como HTTP/HTML/JavaScript<br>Características clave:<ul><li><strong>Acceso universal:</strong> Cualquier dispositivo con navegador puede acceder.</li><li><strong>Actualizaciones centralizadas:</strong> Los cambios se realizan en el servidor.</li><li><strong>Multiplataforma:</strong> Funciona en diferentes sistemas operativos.</li><li><strong>Modelo \"thin client\":</strong> La lógica de negocio reside en el servidor.</li></ul>"
+            },
+            
+            // Sección 2: Conceptos de Seguridad
+            {
+                section: "Conceptos de Seguridad",
+                question: "¿Cuál es la diferencia entre amenaza, vulnerabilidad y riesgo en seguridad?",
+                options: [
+                    "Son términos sinónimos en seguridad informática", 
+                    "Amenaza es un peligro potencial, vulnerabilidad es una debilidad y riesgo es la probabilidad de explotación", 
+                    "Vulnerabilidad es un ataque, amenaza es el daño causado y riesgo es la solución", 
+                    "Amenaza es el firewall, vulnerabilidad es el antivirus y riesgo es el cifrado"
+                ],
+                answer: "Amenaza es un peligro potencial, vulnerabilidad es una debilidad y riesgo es la probabilidad de explotación",
+                explanation: "<strong>Respuesta correcta:</strong> Amenaza es un peligro potencial, vulnerabilidad es una debilidad y riesgo es la probabilidad de explotación<br>Definiciones clave:<ul><li><strong>Amenaza:</strong> Cualquier evento que pueda causar daño (virus, hackers, desastres naturales).</li><li><strong>Vulnerabilidad:</strong> Debilidad en el sistema que puede ser explotada (software sin parches, contraseñas débiles).</li><li><strong>Riesgo:</strong> Probabilidad de que una amenaza explote una vulnerabilidad causando daño.</li></ul>"
+            },
+            {
+                section: "Conceptos de Seguridad",
+                question: "¿Cuál de estos NO es un tipo de malware?",
+                options: [
+                    "Gusano", 
+                    "Troyano", 
+                    "Ransomware", 
+                    "Firewall"
+                ],
+                answer: "Firewall",
+                explanation: "<strong>Respuesta correcta:</strong> Firewall<br>Tipos principales de malware:<ul><li><strong>Virus:</strong> Se adjunta a archivos y se replica.</li><li><strong>Gusano:</strong> Se autoreplica sin necesidad de archivo anfitrión.</li><li><strong>Troyano:</strong> Se disfraza de software legítimo.</li><li><strong>Ransomware:</strong> Cifra archivos y exige rescate.</li><li><strong>Spyware:</strong> Recopila información sin consentimiento.</li><li><strong>Firewall:</strong> NO es malware, es un sistema de protección.</li></ul>"
+            },
+            {
+                section: "Conceptos de Seguridad",
+                question: "¿Qué diferencia hay entre hacker blanco, negro y spammer?",
+                options: [
+                    "El blanco hackea con permiso, el negro sin permiso y el spammer envía correos no deseados", 
+                    "Todos realizan actividades ilegales pero con diferentes motivaciones", 
+                    "El blanco trabaja de día, el negro de noche y el spammer en cualquier momento", 
+                    "Son términos equivalentes en diferentes países"
+                ],
+                answer: "El blanco hackea con permiso, el negro sin permiso y el spammer envía correos no deseados",
+                explanation: "<strong>Respuesta correcta:</strong> El blanco hackea con permiso, el negro sin permiso y el spammer envía correos no deseados<br>Diferencias clave:<ul><li><strong>Hacker blanco (ético):</strong> Identifica vulnerabilidades para corregirlas, con autorización.</li><li><strong>Hacker negro (cracker):</strong> Accede ilegalmente a sistemas con fines maliciosos.</li><li><strong>Spammer:</strong> Envía mensajes masivos no solicitados (generalmente comerciales).</li><li><strong>Hacker gris:</strong> Actúa sin autorización pero sin intención maliciosa (informa vulnerabilidades).</li></ul>"
+            },
+            {
+                section: "Conceptos de Seguridad",
+                question: "¿Qué es la \"técnica salami\" en ciberseguridad?",
+                options: [
+                    "Cortar un ataque en pequeñas partes indetectables", 
+                    "Robar pequeñas cantidades de muchas cuentas para que no se note", 
+                    "Enviar spam en pequeños lotes para evadir filtros", 
+                    "Dividir un virus en fragmentos que se ensamblan después"
+                ],
+                answer: "Robar pequeñas cantidades de muchas cuentas para que no se note",
+                explanation: "<strong>Respuesta correcta:</strong> Robar pequeñas cantidades de muchas cuentas para que no se note<br>Características de la técnica salami:<ul><li>También llamada \"fraude de las migajas\".</li><li>Ejemplo clásico: Redondear centavos en transacciones y desviarlos a otra cuenta.</li><li>Difícil de detectar porque cada víctima pierde cantidades insignificantes.</li><li>Requiere acceso a muchos sistemas o cuentas para ser rentable.</li></ul>"
+            },
+            
+            // Sección 3: Tipos de Malware
+            {
+                section: "Tipos de Malware",
+                question: "¿Qué tipo de malware es el \"Conejo\" o \"Wabbit\"?",
+                options: [
+                    "Un virus que infecta archivos .exe", 
+                    "Un programa que se autoreplica hasta consumir recursos", 
+                    "Un troyano que roba contraseñas", 
+                    "Un gusano que se propaga por email"
+                ],
+                answer: "Un programa que se autoreplica hasta consumir recursos",
+                explanation: "<strong>Respuesta correcta:</strong> Un programa que se autoreplica hasta consumir recursos<br>Sobre el Conejo/Wabbit:<ul><li>No intenta propagarse a otros sistemas.</li><li>Crea copias de sí mismo exponencialmente hasta saturar el sistema.</li><li>Puede consumir CPU, memoria o espacio en disco.</li><li>Nombre proviene de su rápida reproducción, como conejos.</li><li>Ejemplo temprano de ataque de denegación de servicio.</li></ul>"
+            },
+            {
+                section: "Tipos de Malware",
+                question: "¿Cómo funciona un \"Caballo de Troya\" en informática?",
+                options: [
+                    "Se propaga automáticamente por la red", 
+                    "Se disfraza de software legítimo pero contiene código malicioso", 
+                    "Cifra archivos y exige rescate", 
+                    "Registra todas las teclas pulsadas"
+                ],
+                answer: "Se disfraza de software legítimo pero contiene código malicioso",
+                explanation: "<strong>Respuesta correcta:</strong> Se disfraza de software legítimo pero contiene código malicioso<br>Características de los troyanos:<ul><li>No se replican automáticamente (diferencia con virus/gusanos).</li><li>Requieren interacción del usuario (ejecutar el programa).</li><li>Pueden realizar diversas acciones maliciosas:<ul><li>Robar información (keyloggers, spyware)</li><li>Crear puertas traseras</li><li>Descargar otros malware</li><li>Convertir el equipo en bot</li></ul></li><li>Ejemplos famosos: Zeus, Emotet, DarkComet</li></ul>"
+            },
+            {
+                section: "Tipos de Malware",
+                question: "¿Qué es una \"bomba lógica\" en seguridad informática?",
+                options: [
+                    "Un virus que explota vulnerabilidades lógicas en el software", 
+                    "Código malicioso que se activa al cumplirse ciertas condiciones", 
+                    "Un ataque que satura los servidores con peticiones lógicas", 
+                    "Un error de programación que causa fallos en cascada"
+                ],
+                answer: "Código malicioso que se activa al cumplirse ciertas condiciones",
+                explanation: "<strong>Respuesta correcta:</strong> Código malicioso que se activa al cumplirse ciertas condiciones<br>Sobre las bombas lógicas:<ul><li>Permanecen inactivas hasta que se cumple un \"gatillo\" (trigger).</li><li>Condiciones de activación comunes:<ul><li>Fecha/hora específica (ej. Viernes 13, Michelangelo)</li><li>Ejecución de cierto comando</li><li>Aparición/desaparición de un archivo</li><li>Número de veces ejecutado</li></ul></li><li>Usadas en ciberataques avanzados persistentes (APT).</li><li>También empleadas por empleados descontentos (ej. borrar datos al ser despedido).</li></ul>"
+            },
+            {
+                section: "Tipos de Malware",
+                question: "¿Qué es una \"puerta trasera\" (backdoor) en seguridad?",
+                options: [
+                    "Un método de acceso secreto que evita los controles de autenticación", 
+                    "Una vulnerabilidad no intencional en un sistema", 
+                    "Un protocolo de comunicación cifrada", 
+                    "Un tipo de firewall perimetral"
+                ],
+                answer: "Un método de acceso secreto que evita los controles de autenticación",
+                explanation: "<strong>Respuesta correcta:</strong> Un método de acceso secreto que evita los controles de autenticación<br>Sobre las puertas traseras:<ul><li>Pueden ser:<ul><li><strong>Maliciosas:</strong> Instaladas por troyanos o hackers.</li><li><strong>Legítimas:</strong> Para mantenimiento (a veces abusadas).</li></ul></li><li>Formas comunes:<ul><li>Cuentas ocultas con privilegios</li><li>Servicios encubiertos que escuchan conexiones</li><li>Web shells en servidores web</li></ul></li><li>Ejemplos famosos: Dual_EC_DRBG (NSA), Back Orifice</li><li>Detección difícil: Requiere monitorización de red y procesos.</li></ul>"
+            }
+        ];
+
+        // Variables de estado
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timeLeft = 600; // 15 minutos en segundos
+        let timerInterval;
+        let quizStarted = false;
+
+        // Elementos del DOM
+        const startScreen = document.getElementById('start-screen');
+        const quizContainer = document.getElementById('quiz');
+        const questionContainer = document.getElementById('question-container');
+        const resultsContainer = document.getElementById('results');
+        const scoreContainer = document.getElementById('score-container');
+        const detailedResults = document.getElementById('detailed-results');
+        const progressBar = document.getElementById('progress-bar');
+        const sectionTitle = document.getElementById('section-title');
+        const timeDisplay = document.getElementById('time');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Event listeners
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        // Función para iniciar el quiz
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            quizStarted = true;
+            startTimer();
+            showQuestion();
+        }
+
+        // Función para mostrar una pregunta
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            
+            // Actualizar título de sección si cambió
+            if (currentQuestion === 0 || questions[currentQuestion].section !== questions[currentQuestion-1].section) {
+                sectionTitle.textContent = `Sección ${getSectionNumber(question.section)}: ${question.section}`;
+            }
+            
+            // Actualizar barra de progreso
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Construir HTML de la pregunta
+            let html = `<div class="question">
+                <h3>${currentQuestion + 1}. ${question.question}</h3>
+                <div class="options">`;
+            
+            question.options.forEach((option, index) => {
+                const isChecked = userAnswers[currentQuestion] === option ? 'checked' : '';
+                html += `<div class="option">
+                    <input type="radio" name="answer" id="option${index}" value="${option}" ${isChecked}>
+                    <label for="option${index}">${option}</label>
+                </div>`;
+            });
+            
+            html += `</div>
+                <div class="explanation" id="explanation">${question.explanation}</div>
+            </div>`;
+            
+            questionContainer.innerHTML = html;
+            
+            // Añadir event listeners a los radios
+            document.querySelectorAll('input[name="answer"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    userAnswers[currentQuestion] = e.target.value;
+                    document.getElementById('explanation').style.display = 'block';
+                });
+            });
+            
+            // Actualizar estado de los botones de navegación
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Finalizar' : 'Siguiente';
+            
+            // Mostrar explicación si ya se respondió
+            if (userAnswers[currentQuestion] !== null) {
+                document.getElementById('explanation').style.display = 'block';
+            }
+        }
+
+        // Función para obtener número de sección
+        function getSectionNumber(sectionName) {
+            const sections = [...new Set(questions.map(q => q.section))];
+            return sections.indexOf(sectionName) + 1;
+        }
+
+        // Función para ir a la siguiente pregunta
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Función para ir a la pregunta anterior
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        // Función para finalizar el quiz
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            
+            // Calcular puntaje
+            score = 0;
+            questions.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) {
+                    score++;
+                }
+            });
+            
+            // Mostrar resultados generales
+            const percentage = Math.round((score / questions.length) * 100);
+            let message = `Obtuviste ${score} de ${questions.length} respuestas correctas (${percentage}%) - `;
+            
+            if (percentage >= 90) {
+                message += "¡Excelente! Dominas estos conceptos.";
+            } else if (percentage >= 70) {
+                message += "¡Buen trabajo! Pero hay espacio para mejorar.";
+            } else if (percentage >= 50) {
+                message += "Aprobado, pero deberías repasar los conceptos.";
+            } else {
+                message += "Necesitas estudiar más estos temas. Revisa las explicaciones.";
+            }
+            
+            scoreContainer.textContent = message;
+            scoreContainer.className = 'results ' + (percentage >= 70 ? 'correct' : 'incorrect');
+            
+            // Mostrar resultados detallados
+            detailedResults.innerHTML = '<h3>Detalle por pregunta:</h3>';
+            questions.forEach((q, index) => {
+                const isCorrect = userAnswers[index] === q.answer;
+                const userAnswer = userAnswers[index] !== null ? userAnswers[index] : 'Sin responder';
+                const correctAnswer = q.answer;
+                
+                detailedResults.innerHTML += `
+                    <div class="question-result ${isCorrect ? 'correct' : 'incorrect'}">
+                        <p><strong>Pregunta ${index + 1}:</strong> ${q.question}</p>
+                        <p><strong>Tu respuesta:</strong> ${userAnswer}</p>
+                        ${!isCorrect ? `<p><strong>Respuesta correcta:</strong> ${correctAnswer}</p>` : ''}
+                        <div class="explanation">${q.explanation}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Función para reiniciar el quiz
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            timeLeft = 600;
+            updateTimerDisplay();
+            
+            resultsContainer.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            
+            clearInterval(timerInterval);
+            quizStarted = false;
+        }
+
+        // Funciones para el temporizador
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 300) { // 5 minutos o menos
+                timeDisplay.style.color = '#e74c3c';
+            }
+        }
+    </script>
+</body>
+</html>

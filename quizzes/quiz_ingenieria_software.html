@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Ingeniería de Software</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .question h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: #3498db;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .section-title {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 30px 0 15px 0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .navigation button {
+            margin: 0;
+        }
+        
+        #restart-btn {
+            background-color: #e74c3c;
+        }
+        
+        #restart-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        
+        .timer {
+            text-align: right;
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz de Ingeniería de Software</h1>
+    <div class="timer">Tiempo: <span id="time">10:00</span></div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    
+    <div id="start-screen">
+        <div class="quiz-container">
+            <h2>Bienvenido al Quiz de Ingeniería de Software</h2>
+            <p>Este cuestionario cubre temas de modelado de requisitos, análisis y diseño en ingeniería de software.</p>
+            <p>El quiz contiene 32 preguntas divididas en 7 secciones. Tendrás 10 minutos para completarlo.</p>
+            <button id="start-btn">Comenzar Quiz</button>
+        </div>
+    </div>
+    
+    <div id="quiz" class="hidden">
+        <div class="section-title" id="section-title">Sección 1: Introducción y Conceptos Básicos</div>
+        <div class="quiz-container" id="question-container"></div>
+        <div class="navigation">
+            <button id="prev-btn" disabled>Anterior</button>
+            <button id="next-btn">Siguiente</button>
+        </div>
+    </div>
+    
+    <div id="results" class="hidden">
+        <div class="quiz-container">
+            <h2>Resultados del Quiz</h2>
+            <div class="results" id="score-container"></div>
+            <div id="detailed-results"></div>
+            <button id="restart-btn">Reiniciar Quiz</button>
+            <a href="../index.html"><button id="restart-btn">Regresar al menú.</button></a>
+        </div>
+    </div>
+
+    <script>
+        // Función para mezclar array (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Preguntas del quiz
+        const questions = [
+            // Sección 1: Introducción y Conceptos Básicos
+            {
+                section: "Introducción y Conceptos Básicos",
+                question: "¿Qué es un stakeholder en ingeniería de software?",
+                options: shuffleArray([
+                    "Un componente técnico del sistema.",
+                    "Cualquier persona o grupo interesado o afectado por el proyecto.",
+                    "Una herramienta de gestión de requisitos."
+                ]),
+                answer: "Cualquier persona o grupo interesado o afectado por el proyecto.",
+                explanation: "Los stakeholders son todas las partes interesadas en el proyecto (clientes, usuarios, equipo de desarrollo, reguladores, etc.) cuyas necesidades deben considerarse."
+            },
+            {
+                section: "Introducción y Conceptos Básicos",
+                question: "¿Qué es un requisito funcional?",
+                options: shuffleArray([
+                    "Una restricción técnica del sistema.",
+                    "Una funcionalidad que el sistema debe realizar.",
+                    "Un documento de diseño de interfaz."
+                ]),
+                answer: "Una funcionalidad que el sistema debe realizar.",
+                explanation: "Los requisitos funcionales describen qué debe hacer el sistema, es decir, sus funcionalidades específicas."
+            },
+            {
+                section: "Introducción y Conceptos Básicos",
+                question: "¿Cuál es la diferencia entre requisitos funcionales y no funcionales?",
+                options: shuffleArray([
+                    "Los funcionales definen qué hace el sistema, y los no funcionales cómo lo hace (rendimiento, seguridad, etc.).",
+                    "Los funcionales son opcionales, y los no funcionales obligatorios.",
+                    "No hay diferencia, son sinónimos."
+                ]),
+                answer: "Los funcionales definen qué hace el sistema, y los no funcionales cómo lo hace (rendimiento, seguridad, etc.).",
+                explanation: "Los requisitos funcionales describen las funcionalidades del sistema, mientras que los no funcionales especifican atributos de calidad como rendimiento, seguridad, usabilidad, etc."
+            },
+            {
+                section: "Introducción y Conceptos Básicos",
+                question: "El modelado de requisitos es importante porque:",
+                options: shuffleArray([
+                    "Ayuda a visualizar el sistema y mejorar la comunicación con el cliente.",
+                    "Reemplaza la necesidad de escribir código.",
+                    "Solo es útil en metodologías tradicionales (no ágiles)."
+                ]),
+                answer: "Ayuda a visualizar el sistema y mejorar la comunicación con el cliente.",
+                explanation: "El modelado de requisitos permite representar visualmente el sistema, facilitando la comprensión y comunicación entre stakeholders y el equipo de desarrollo."
+            },
+            
+            // Sección 2: Técnicas de Modelado de Requisitos
+            {
+                section: "Técnicas de Modelado de Requisitos",
+                question: "¿Cuál de estas es una técnica para recolectar requisitos?",
+                options: shuffleArray([
+                    "Entrevistas con stakeholders.",
+                    "Depuración de código.",
+                    "Diseño de interfaces."
+                ]),
+                answer: "Entrevistas con stakeholders.",
+                explanation: "Las entrevistas con stakeholders son una técnica fundamental para recolectar requisitos, ya que permiten comprender directamente las necesidades de los usuarios."
+            },
+            {
+                section: "Técnicas de Modelado de Requisitos",
+                question: "Los talleres colaborativos son útiles para:",
+                options: shuffleArray([
+                    "Definir requisitos con múltiples partes interesadas.",
+                    "Escribir código en equipo.",
+                    "Realizar pruebas de rendimiento."
+                ]),
+                answer: "Definir requisitos con múltiples partes interesadas.",
+                explanation: "Los talleres colaborativos reúnen a diferentes stakeholders para definir requisitos de manera conjunta, aprovechando diferentes perspectivas."
+            },
+            {
+                section: "Técnicas de Modelado de Requisitos",
+                question: "La observación en el modelado de requisitos consiste en:",
+                options: shuffleArray([
+                    "Analizar cómo se realizan las tareas en el entorno actual.",
+                    "Leer documentación técnica antigua.",
+                    "Hacer encuestas anónimas."
+                ]),
+                answer: "Analizar cómo se realizan las tareas en el entorno actual.",
+                explanation: "La observación directa permite identificar requisitos implícitos al ver cómo los usuarios realizan sus tareas en su entorno real."
+            },
+            {
+                section: "Técnicas de Modelado de Requisitos",
+                question: "¿Qué ventaja tiene el uso de cuestionarios y encuestas?",
+                options: shuffleArray([
+                    "Obtener respuestas estructuradas y específicas de los usuarios.",
+                    "Generar código automáticamente.",
+                    "Diseñar diagramas UML."
+                ]),
+                answer: "Obtener respuestas estructuradas y específicas de los usuarios.",
+                explanation: "Los cuestionarios y encuestas permiten recolectar información estandarizada de muchos usuarios de manera eficiente."
+            },
+            
+            // Sección 3: Modelado Visual y Diagramas
+            {
+                section: "Modelado Visual y Diagramas",
+                question: "Un diagrama de casos de uso representa:",
+                options: shuffleArray([
+                    "La interacción entre actores y el sistema.",
+                    "La estructura de la base de datos.",
+                    "El rendimiento del sistema."
+                ]),
+                answer: "La interacción entre actores y el sistema.",
+                explanation: "Los diagramas de casos de uso muestran cómo los actores (usuarios o sistemas externos) interactúan con las funcionalidades del sistema."
+            },
+            {
+                section: "Modelado Visual y Diagramas",
+                question: "¿Qué muestra un diagrama de secuencia?",
+                options: shuffleArray([
+                    "Cómo interactúan los objetos en una secuencia de eventos.",
+                    "Las clases y sus atributos.",
+                    "Los requisitos no funcionales."
+                ]),
+                answer: "Cómo interactúan los objetos en una secuencia de eventos.",
+                explanation: "Los diagramas de secuencia detallan las interacciones entre objetos en un escenario específico, mostrando el orden de los mensajes."
+            },
+            {
+                section: "Modelado Visual y Diagramas",
+                question: "Un diagrama de clases se utiliza para:",
+                options: shuffleArray([
+                    "Esquematizar entidades, atributos y relaciones entre objetos.",
+                    "Mostrar el flujo de trabajo de un proceso.",
+                    "Validar prototipos de interfaz."
+                ]),
+                answer: "Esquematizar entidades, atributos y relaciones entre objetos.",
+                explanation: "Los diagramas de clases representan la estructura estática del sistema, mostrando clases, sus atributos, métodos y relaciones."
+            },
+            {
+                section: "Modelado Visual y Diagramas",
+                question: "¿Qué diagrama UML representa flujos de trabajo o procesos?",
+                options: shuffleArray([
+                    "Diagrama de actividad.",
+                    "Diagrama de despliegue.",
+                    "Diagrama de componentes."
+                ]),
+                answer: "Diagrama de actividad.",
+                explanation: "Los diagramas de actividad son ideales para modelar flujos de trabajo, procesos de negocio o algoritmos complejos."
+            },
+            {
+                section: "Modelado Visual y Diagramas",
+                question: "¿Qué representa un diagrama de despliegue en UML?",
+                options: shuffleArray([
+                    "La distribución física del software en hardware.",
+                    "El flujo de datos entre componentes.",
+                    "La estructura de clases del sistema."
+                ]),
+                answer: "La distribución física del software en hardware.",
+                explanation: "Los diagramas de despliegue muestran cómo se instalarán y ejecutarán los componentes del software en la infraestructura física (servidores, dispositivos, etc.)."
+            },
+            {
+                section: "Modelado Visual y Diagramas",
+                question: "¿Qué describe un diagrama de componentes en UML?",
+                options: shuffleArray([
+                    "Las relaciones entre módulos o componentes del sistema.",
+                    "La secuencia de mensajes entre objetos.",
+                    "Los casos de uso del sistema."
+                ]),
+                answer: "Las relaciones entre módulos o componentes del sistema.",
+                explanation: "Los diagramas de componentes muestran la estructura modular del sistema y cómo interactúan los componentes entre sí."
+            },
+            
+            // Sección 4: Priorización y Validación de Requisitos
+            {
+                section: "Priorización y Validación de Requisitos",
+                question: "La técnica MoSCoW clasifica los requisitos en:",
+                options: shuffleArray([
+                    "Must have, Should have, Could have, Won't have.",
+                    "Alto, Medio, Bajo.",
+                    "Urgente, Normal, Baja prioridad."
+                ]),
+                answer: "Must have, Should have, Could have, Won't have.",
+                explanation: "MoSCoW es un acrónimo para Must (obligatorios), Should (importantes), Could (deseables) y Won't (no incluidos en esta versión)."
+            },
+            {
+                section: "Priorización y Validación de Requisitos",
+                question: "¿Qué es el análisis de impacto en requisitos?",
+                options: shuffleArray([
+                    "Evaluar cómo los cambios afectan al proyecto.",
+                    "Medir la velocidad de desarrollo.",
+                    "Diseñar interfaces de usuario."
+                ]),
+                answer: "Evaluar cómo los cambios afectan al proyecto.",
+                explanation: "El análisis de impacto ayuda a entender las consecuencias de cambios en los requisitos, considerando costo, tiempo y complejidad."
+            },
+            {
+                section: "Priorización y Validación de Requisitos",
+                question: "Los prototipos ayudan a:",
+                options: shuffleArray([
+                    "Validar requisitos con usuarios antes del desarrollo.",
+                    "Reemplazar la documentación técnica.",
+                    "Optimizar el código."
+                ]),
+                answer: "Validar requisitos con usuarios antes del desarrollo.",
+                explanation: "Los prototipos permiten obtener feedback temprano de los usuarios, validando requisitos y evitando malentendidos costosos."
+            },
+            {
+                section: "Priorización y Validación de Requisitos",
+                question: "¿Qué es la validación de requisitos?",
+                options: shuffleArray([
+                    "Asegurar que los requisitos son correctos y completos.",
+                    "Escribir casos de prueba.",
+                    "Diseñar la arquitectura del sistema."
+                ]),
+                answer: "Asegurar que los requisitos son correctos y completos.",
+                explanation: "La validación verifica que los requisitos capturan correctamente las necesidades de los stakeholders y son implementables."
+            },
+            
+            // Sección 5: Herramientas de Modelado
+            {
+                section: "Herramientas de Modelado",
+                question: "¿Cuál herramienta es usada para gestión ágil de requisitos?",
+                options: shuffleArray([
+                    "Jira.",
+                    "Figma.",
+                    "Adobe XD."
+                ]),
+                answer: "Jira.",
+                explanation: "Jira es una herramienta popular para gestión ágil de proyectos, incluyendo el seguimiento de requisitos en metodologías como Scrum."
+            },
+            {
+                section: "Herramientas de Modelado",
+                question: "IBM Engineering Requirements Management (DOORS) es útil para:",
+                options: shuffleArray([
+                    "Captura y análisis detallado de requisitos.",
+                    "Diseño de interfaces.",
+                    "Creación de diagramas UML."
+                ]),
+                answer: "Captura y análisis detallado de requisitos.",
+                explanation: "DOORS es una herramienta especializada en gestión de requisitos, especialmente en proyectos complejos y regulados."
+            },
+            {
+                section: "Herramientas de Modelado",
+                question: "¿Qué herramienta permite crear diagramas UML como Lucidchart?",
+                options: shuffleArray([
+                    "Draw.io.",
+                    "Axure RP.",
+                    "Miro."
+                ]),
+                answer: "Draw.io.",
+                explanation: "Draw.io es una alternativa gratuita a Lucidchart para crear diagramas UML, de flujo y otros modelos visuales."
+            },
+            {
+                section: "Herramientas de Modelado",
+                question: "Figma y Adobe XD son herramientas para:",
+                options: shuffleArray([
+                    "Prototipado de interfaces.",
+                    "Gestión de requisitos.",
+                    "Análisis de impacto."
+                ]),
+                answer: "Prototipado de interfaces.",
+                explanation: "Estas herramientas permiten diseñar y prototipar interfaces de usuario, útiles para validar requisitos de usabilidad."
+            },
+            {
+                section: "Herramientas de Modelado",
+                question: "¿Para qué se usa Confluence en ingeniería de software?",
+                options: shuffleArray([
+                    "Documentar y centralizar información sobre requisitos.",
+                    "Crear diagramas de secuencia.",
+                    "Gestionar pruebas de rendimiento."
+                ]),
+                answer: "Documentar y centralizar información sobre requisitos.",
+                explanation: "Confluence es una wiki colaborativa que permite documentar requisitos, decisiones de diseño y otra información del proyecto."
+            },
+            
+            // Sección 6: Modelado de Análisis y Diseño
+            {
+                section: "Modelado de Análisis y Diseño",
+                question: "El modelo de análisis transforma los requisitos en:",
+                options: shuffleArray([
+                    "Una representación estructurada para guiar el diseño.",
+                    "Un prototipo funcional.",
+                    "Código fuente."
+                ]),
+                answer: "Una representación estructurada para guiar el diseño.",
+                explanation: "El modelo de análisis traduce los requisitos en una representación técnica que sirve de base para el diseño del sistema."
+            },
+            {
+                section: "Modelado de Análisis y Diseño",
+                question: "¿Qué técnica NO es parte del modelo de análisis?",
+                options: shuffleArray([
+                    "Diagramas UML.",
+                    "Pruebas de rendimiento.",
+                    "Análisis orientado a objetos."
+                ]),
+                answer: "Pruebas de rendimiento.",
+                explanation: "Las pruebas de rendimiento son parte de la fase de pruebas, no del modelado de análisis."
+            },
+            {
+                section: "Modelado de Análisis y Diseño",
+                question: "Un diagrama de secuencia en el modelo de análisis describe:",
+                options: shuffleArray([
+                    "La implementación lógica de requisitos funcionales.",
+                    "La paleta de colores de la interfaz.",
+                    "Los servidores físicos del sistema."
+                ]),
+                answer: "La implementación lógica de requisitos funcionales.",
+                explanation: "Los diagramas de secuencia en análisis muestran cómo se implementarán lógicamente las interacciones del sistema."
+            },
+            {
+                section: "Modelado de Análisis y Diseño",
+                question: "¿Qué arquitectura es común en aplicaciones móviles?",
+                options: shuffleArray([
+                    "Cliente-servidor.",
+                    "Monolítica.",
+                    "Basada en eventos."
+                ]),
+                answer: "Cliente-servidor.",
+                explanation: "La arquitectura cliente-servidor es predominante en apps móviles, donde el cliente (app) se comunica con servidores backend."
+            },
+            {
+                section: "Modelado de Análisis y Diseño",
+                question: "El modelo de diseño sirve como puente entre:",
+                options: shuffleArray([
+                    "El análisis y la codificación.",
+                    "Las pruebas y el despliegue.",
+                    "La documentación y el marketing."
+                ]),
+                answer: "El análisis y la codificación.",
+                explanation: "El diseño técnico convierte los modelos de análisis en especificaciones detalladas para los desarrolladores."
+            },
+            
+            // Sección 7: Ejemplo Práctico (App de Citas)
+            {
+                section: "Ejemplo Práctico (App de Citas)",
+                question: "En una app de citas, ¿qué requisito funcional es esencial?",
+                options: shuffleArray([
+                    "Los usuarios pueden crear un perfil con nombre, edad y fotos.",
+                    "La app debe usar colores brillantes.",
+                    "El servidor debe estar en la nube."
+                ]),
+                answer: "Los usuarios pueden crear un perfil con nombre, edad y fotos.",
+                explanation: "La creación de perfiles es un requisito funcional fundamental para una app de citas."
+            },
+            {
+                section: "Ejemplo Práctico (App de Citas)",
+                question: "¿Qué requisito NO sería funcional en una app de citas?",
+                options: shuffleArray([
+                    "Permitir mensajes privados entre usuarios.",
+                    "Tiempo de respuesta menor a 2 segundos.",
+                    "Emparejamiento basado en ubicación."
+                ]),
+                answer: "Tiempo de respuesta menor a 2 segundos.",
+                explanation: "El tiempo de respuesta es un requisito no funcional (de rendimiento), no una funcionalidad del sistema."
+            },
+            {
+                section: "Ejemplo Práctico (App de Citas)",
+                question: "¿Qué técnica ayudaría a priorizar funciones en una app de citas?",
+                options: shuffleArray([
+                    "MoSCoW.",
+                    "SCRUM.",
+                    "UML."
+                ]),
+                answer: "MoSCoW.",
+                explanation: "La técnica MoSCoW es ideal para priorizar requisitos en categorías según su importancia."
+            },
+            {
+                section: "Ejemplo Práctico (App de Citas)",
+                question: "Para validar la interfaz de una app de citas, ¿qué herramienta sería útil?",
+                options: shuffleArray([
+                    "Figma o Adobe XD.",
+                    "Jira.",
+                    "DOORS."
+                ]),
+                answer: "Figma o Adobe XD.",
+                explanation: "Figma y Adobe XD permiten crear prototipos interactivos para validar el diseño de la interfaz con usuarios."
+            },
+            {
+                section: "Ejemplo Práctico (App de Citas)",
+                question: "En el modelo de diseño de una app de citas, ¿qué se definiría primero?",
+                options: shuffleArray([
+                    "Arquitectura del sistema (ej: cliente-servidor).",
+                    "Paleta de colores.",
+                    "Campaña de lanzamiento."
+                ]),
+                answer: "Arquitectura del sistema (ej: cliente-servidor).",
+                explanation: "La arquitectura del sistema es una decisión fundamental de diseño que afecta todas las demás."
+            }
+        ];
+
+        // Variables de estado
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timeLeft = 600; // 35 minutos en segundos
+        let timerInterval;
+        let quizStarted = false;
+
+        // Elementos del DOM
+        const startScreen = document.getElementById('start-screen');
+        const quizContainer = document.getElementById('quiz');
+        const questionContainer = document.getElementById('question-container');
+        const resultsContainer = document.getElementById('results');
+        const scoreContainer = document.getElementById('score-container');
+        const detailedResults = document.getElementById('detailed-results');
+        const progressBar = document.getElementById('progress-bar');
+        const sectionTitle = document.getElementById('section-title');
+        const timeDisplay = document.getElementById('time');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Event listeners
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        // Función para iniciar el quiz
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            quizStarted = true;
+            startTimer();
+            showQuestion();
+        }
+
+        // Función para mostrar una pregunta
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            
+            // Actualizar título de sección si cambió
+            if (currentQuestion === 0 || questions[currentQuestion].section !== questions[currentQuestion-1].section) {
+                sectionTitle.textContent = `Sección ${getSectionNumber(question.section)}: ${question.section}`;
+            }
+            
+            // Actualizar barra de progreso
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Construir HTML de la pregunta
+            let html = `<div class="question">
+                <h3>${currentQuestion + 1}. ${question.question}</h3>
+                <div class="options">`;
+            
+            question.options.forEach((option, index) => {
+                const isChecked = userAnswers[currentQuestion] === option ? 'checked' : '';
+                html += `<div class="option">
+                    <input type="radio" name="answer" id="option${index}" value="${option}" ${isChecked}>
+                    <label for="option${index}">${option}</label>
+                </div>`;
+            });
+            
+            html += `</div>
+                <div class="explanation" id="explanation">${question.explanation}</div>
+            </div>`;
+            
+            questionContainer.innerHTML = html;
+            
+            // Añadir event listeners a los radios
+            document.querySelectorAll('input[name="answer"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    userAnswers[currentQuestion] = e.target.value;
+                });
+            });
+            
+            // Actualizar estado de los botones de navegación
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Finalizar' : 'Siguiente';
+            
+            // Mostrar explicación si ya se respondió
+            if (userAnswers[currentQuestion] !== null) {
+                showExplanation();
+            }
+        }
+
+        // Función para obtener número de sección
+        function getSectionNumber(sectionName) {
+            const sections = [...new Set(questions.map(q => q.section))];
+            return sections.indexOf(sectionName) + 1;
+        }
+
+        // Función para mostrar explicación
+        function showExplanation() {
+            const explanation = document.getElementById('explanation');
+            if (explanation) {
+                explanation.style.display = 'block';
+            }
+        }
+
+        // Función para ir a la siguiente pregunta
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Función para ir a la pregunta anterior
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        // Función para finalizar el quiz
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            
+            // Calcular puntaje
+            score = 0;
+            questions.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) {
+                    score++;
+                }
+            });
+            
+            // Mostrar resultados generales
+            const percentage = Math.round((score / questions.length) * 100);
+            scoreContainer.textContent = `Obtuviste ${score} de ${questions.length} respuestas correctas (${percentage}%)`;
+            scoreContainer.className = 'results ' + (percentage >= 70 ? 'correct' : 'incorrect');
+            
+            // Mostrar resultados detallados
+            detailedResults.innerHTML = '<h3>Detalle por pregunta:</h3>';
+            questions.forEach((q, index) => {
+                const isCorrect = userAnswers[index] === q.answer;
+                const userAnswer = userAnswers[index] !== null ? userAnswers[index] : 'Sin responder';
+                const correctAnswer = q.answer;
+                
+                detailedResults.innerHTML += `
+                    <div class="question-result ${isCorrect ? 'correct' : 'incorrect'}">
+                        <p><strong>Pregunta ${index + 1}:</strong> ${q.question}</p>
+                        <p><strong>Tu respuesta:</strong> ${userAnswer}</p>
+                        ${!isCorrect ? `<p><strong>Respuesta correcta:</strong> ${correctAnswer}</p>` : ''}
+                        <p><strong>Explicación:</strong> ${q.explanation}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Función para reiniciar el quiz
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            timeLeft = 600;
+            updateTimerDisplay();
+            
+            resultsContainer.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            
+            clearInterval(timerInterval);
+            quizStarted = false;
+        }
+
+        // Funciones para el temporizador
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 300) { // 5 minutos o menos
+                timeDisplay.style.color = '#e74c3c';
+            }
+        }
+    </script>
+</body>
+</html>
